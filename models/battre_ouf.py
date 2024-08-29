@@ -6,7 +6,7 @@ from models.oeuf import Oeuf
 
 class BatteurOeufs(Commis):
     def __init__(self, name, nb_oeufs, recipient):
-        super().__init__(name)  # Appelle le constructeur de la classe mère `Commis`
+        super().__init__(name)
         self.nb_oeufs = nb_oeufs
         self.recipient = recipient
 
