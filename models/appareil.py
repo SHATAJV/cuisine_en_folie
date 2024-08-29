@@ -1,5 +1,6 @@
 from models.ingrediants import Ingredient
 
+
 class Appareil:
     """
     Represents a device used to mix ingredients.
