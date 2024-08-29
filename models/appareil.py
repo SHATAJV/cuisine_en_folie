@@ -1,16 +1,13 @@
 from models.ingrediants import Ingredient
 
-
-class Appareil(Ingredient):
+class Appareil:
     def __init__(self):
         self.ingredients = []
 
-    def ajouter_ingredient(self, ingredient):
-
+    def ajouter_ingredient(self, ingredient: Ingredient):
         self.ingredients.append(ingredient)
 
     def melanger(self):
-
         print("Mélange des ingrédients :")
         for ingredient in self.ingredients:
             print(f"- {ingredient.name}: {ingredient.quantity} {ingredient.unit}")

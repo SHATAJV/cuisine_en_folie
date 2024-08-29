@@ -1,18 +1,26 @@
 import threading
 import time
 
+import time
 
-class Verseur(threading.Thread):
+from models.commis import Commis
+
+
+class Verseur(Commis):
     def __init__(self, name, source, destination, rate):
-        threading.Thread.__init__(self)
-        self.name = name
+        super().__init__(name)
         self.source = source
         self.destination = destination
         self.rate = rate
 
-    def run(self):
-        while self.source.content and self.destination:
-            print(f"{self.name} verse de {self.source.name} à {self.destination.name}.")
+    def work(self):
+        global lock
+        with lock:
+            quantity_to_verser = self.source.content.quantity
+            while quantity_to_verser > 0:
+                amount_to_verse = min(self.rate, quantity_to_verser)
+                print(f"{self.name} verse {amount_to_verse} grammes du {self.source.name} dans le {self.destination.name}")
+                quantity_to_verser -= amount_to_verse
+                time.sleep(1)
+            print(f"{self.name} a terminé de verser le contenu.")
 
-            time.sleep(self.rate)
-            
