@@ -1,5 +1,7 @@
+from models.ingrediants import Ingredient
 
-class Appareil:
+
+class Appareil(Ingredient):
     def __init__(self):
         self.ingredients = []
 
