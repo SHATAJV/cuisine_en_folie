@@ -1,10 +1,23 @@
 import threading
+import time
 
+class Oeuf:
+    def __init__(self, quantity):
+        self.name = "Oeuf"
+        self.quantity = quantity
+        self.batteur_thread = None
 
-class Oeufs(threading.Thread):
-    def __init__(self, nb_oeufs):
-        threading.Thread.__init__(self)
-        self.nb_oeufs = nb_oeufs
+    def battre(self):
 
-    def use(self):
-        print(f"Utilisation des {self.quantity} oeufs.")
+        if not self.batteur_thread:
+            self.batteur_thread = threading.Thread(target=self.battreouef)
+            self.batteur_thread.start()
+        else:
+            print("Les oeufs sont déjà en cours de battage.")
+
+    def battreouef(self):
+
+        nb_tours = self.quantity * 8
+        for no_tour in range(1, nb_tours + 1):
+            print(f"\tJe bats les {self.quantity} oeufs, tour n°{no_tour}")
+            time.sleep(0.5)
