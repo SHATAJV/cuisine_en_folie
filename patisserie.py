@@ -12,8 +12,8 @@ def main():
     recipient_oeufs = Recipient(name="bol d'œufs")
     recipient_chocolat = Recipient(name="bol de chocolat")
 
-    fondeur_1 = FondeurChocolat(name="Fondeur 1", quantity=200, recipient=recipient_chocolat)
-    fondeur_2 = FondeurChocolat(name="Fondeur 2", quantity=200, recipient=recipient_chocolat)
+    fondeur_1 = FondeurChocolat(name="Fondeur 1", quantity=200)
+    fondeur_2 = FondeurChocolat(name="Fondeur 2", quantity=200)
     batteur_1 = BatteurOeufs(name="Batteur 1", nb_oeufs=6, recipient=recipient_oeufs)
 
     fondeur_1.start()
@@ -32,7 +32,7 @@ def main():
     lock = threading.Lock()
 
 
-    verseur1 = Verseur(name="Verseur 1", source=recipient_chocolat, destination=recipient_oeufs, rate=10, lock=lock)
+    verseur1 = Verseur(name="Verseur 1", source=recipient_chocolat, destination=recipient_oeufs, rate=10)
     verseur2 = Verseur(name="Verseur 2", source=recipient_chocolat, destination=recipient_oeufs, rate=10, lock=lock)
 
     verseur1.start()
