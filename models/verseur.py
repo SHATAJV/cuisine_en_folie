@@ -1,54 +1,48 @@
 import threading
 import time
+
 from models.commis import Commis
 
-# Global lock for thread synchronization
-lock = threading.Lock()
 
-class Verseur(Commis):
+class Verseur(Commis, threading.Thread):
     """
-    Represents a pourer that transfers content from a source to a destination at a specified rate.
+    Represents a kitchen assistant responsible for pouring an ingredient from one container to another.
 
     Inherits from:
         Commis: The base class representing a kitchen assistant.
-
-    Attributes:
-        source (Recipient): The container from which content is poured.
-        destination (Recipient): The container into which content is poured.
-        rate (float): The rate at which content is poured, in grams per second.
+        threading.Thread: To allow the pouring action to run in a separate thread.
     """
 
-    def __init__(self, name: str, source, destination, rate: float):
+    def __init__(self, name, source, destination, rate):
         """
-        Initializes the Verseur with a name, source container, destination container, and pour rate.
+        Initializes the Verseur with a name, source, destination, and pouring rate.
 
         Args:
-            name (str): The name of the pourer.
-            source (Recipient): The container from which content is being poured.
-            destination (Recipient): The container into which content is being poured.
-            rate (float): The rate at which content is poured, in grams per second.
+            name (str): The name of the Verseur.
+            source (Recipient): The source container.
+            destination (Recipient): The destination container.
+            rate (int): The rate of pouring per second (in units).
         """
-        super().__init__(name)
+        Commis.__init__(self, name)
+        threading.Thread.__init__(self)
         self.source = source
         self.destination = destination
         self.rate = rate
 
-    def work(self):
+    def run(self):
         """
-        Performs the task of pouring content from the source container to the destination container.
-
-        This method transfers content in increments defined by the rate attribute,
-        and handles the pouring process until the source container is empty.
+        Executes the pouring action in a separate thread.
 
         Outputs:
-            Prints messages indicating the progress of pouring and when the process is complete.
+            Prints a message indicating the progress of pouring.
         """
         global lock
         with lock:
             quantity_to_verser = self.source.content.quantity
             while quantity_to_verser > 0:
                 amount_to_verse = min(self.rate, quantity_to_verser)
-                print(f"{self.name} verse {amount_to_verse} grammes du {self.source.name} dans le {self.destination.name}")
+                print(
+                    f"{self.name} verse {amount_to_verse} grammes de {self.source.content.name} dans le {self.destination.name}")
                 quantity_to_verser -= amount_to_verse
                 time.sleep(1)
             print(f"{self.name} a terminé de verser le contenu.")

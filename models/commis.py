@@ -1,28 +1,13 @@
 from abc import ABC, abstractmethod
+import threading
 
-class Commis(ABC):
-    """
-    Abstract base class representing a kitchen assistant.
-
-    Attributes:
-        name (str): The name of the kitchen assistant.
-    """
-
-    def __init__(self, name: str):
-        """
-        Initializes the Commis with a given name.
-
-        Args:
-            name (str): The name of the kitchen assistant.
-        """
+# Classe abstraite Commis avec threading
+class Commis(ABC, threading.Thread):
+    def __init__(self, name):
+        # Appeler explicitement le constructeur de threading.Thread
+        threading.Thread.__init__(self)
         self.name = name
 
     @abstractmethod
-    def work(self):
-        """
-        Abstract method that must be implemented by subclasses.
-
-        This method should define the specific tasks or actions
-        that the kitchen assistant performs.
-        """
+    def run(self):
         pass

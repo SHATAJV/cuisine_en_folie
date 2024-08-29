@@ -1,34 +1,19 @@
+import time
+
 from models.commis import Commis
+from models.oeuf import Oeuf
 
 
 class BatteurOeufs(Commis):
-    """
-    Represents a kitchen assistant specialized in beating eggs.
-
-    Inherits from:
-        Commis: The base class representing a kitchen assistant.
-
-    Attributes:
-        name (str): The name of the assistant.
-        nb_oeufs (int): The number of eggs to be beaten.
-    """
-
-    def __init__(self, name: str, nb_oeufs: int):
-        """
-        Initializes the BatteurOeufs with the assistant's name and number of eggs.
-
-        Args:
-            name (str): The name of the assistant.
-            nb_oeufs (int): The number of eggs to be beaten.
-        """
-        super().__init__(name)
+    def __init__(self, name, nb_oeufs, recipient):
+        super().__init__(name)  # Appelle le constructeur de la classe mère `Commis`
         self.nb_oeufs = nb_oeufs
+        self.recipient = recipient
 
-    def work(self):
-        """
-        Performs the task of beating the eggs and prints the action.
-
-        Outputs:
-            Prints a message indicating the number of eggs being beaten by the assistant.
-        """
+    def run(self):
         print(f"{self.name} bats les {self.nb_oeufs} oeufs.")
+        for i in range(1, self.nb_oeufs + 1):
+            print(f"{self.name} est en train de battre l'œuf n°{i}.")
+            time.sleep(1)
+        print(f"{self.name} a terminé de battre les œufs.")
+        self.recipient.ajouter_content(Oeuf(self.nb_oeufs))
