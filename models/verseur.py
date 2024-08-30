@@ -1,42 +1,45 @@
+
 import threading
-import time
+from models.chocolat import Chocolat
 from models.commis import Commis
+import time
 
 
-class Verseur(Commis):
-    """
-    A class representing a pourer that transfers content from a source to a destination
-    at a specified rate. Inherits from the Commis class and supports concurrent execution.
-
-    Attributes:
-        name (str): The name of the pourer.
-        source (Recipient): The source from which content is poured.
-        destination (Recipient): The destination to which content is poured.
-        rate (int): The rate at which content is poured (quantity per second).
-    """
-
-    def __init__(self, name: str, source, destination, rate: int):
-        super().__init__(name)
+class Verseur(threading.Thread):
+    def __init__(self, name: str, source, destination, rate: int, target_quantity: float):
+        super().__init__()
+        self.name = name
         self.source = source
         self.destination = destination
         self.rate = rate
+        self.target_quantity = target_quantity
 
     def run(self):
-        """
-        Executes the content pouring process.
+        total_poured = 0
+        while total_poured < self.target_quantity:
+            with self.source.lock:
+                if not self.source.content or self.source.content[0].quantity <= 0:
+                    break
+                item = self.source.content[0]
+                quantity_to_pour = min(self.rate, item.quantity)
+                if total_poured + quantity_to_pour > self.target_quantity:
+                    quantity_to_pour = self.target_quantity - total_poured
 
-        Continuously pours content from the source to the destination at the specified rate.
-        Ensures that at least 30 grams of content remain in the source.
-        """
-        while self.source.content and self.source.content[0].quantity > 30:
-            item = self.source.content[0]
-            quantity_to_verser = min(self.rate, item.quantity - 30)  # Ensure 30g remains
-            print(f"{self.name} pours {quantity_to_verser} {item.unit} of {item.name} into {self.destination.name}")
-            item.quantity -= quantity_to_verser
-            if item.quantity <= 30:  # Stop pouring when 30g or less remains
-                break
-            self.destination.ajouter_content(item)
-            time.sleep(1)
+                item.quantity -= quantity_to_pour
+                total_poured += quantity_to_pour
 
-        print(
-            f"{self.name} has finished pouring the content. {self.source.content[0].quantity} {item.unit} of {item.name} remains in the source.")
+                if item.quantity == 0:
+                    self.source.content.pop(0)
+                self.destination.ajouter_content(Chocolat(quantity=quantity_to_pour))
+
+            print(f"{self.name} pours {quantity_to_pour} grams of chocolate into {self.destination.name}")
+            time.sleep(1)  # Wait for 1 second before pouring the next batch
+
+        # Ensure 30 grams of chocolate remains in the source
+        with self.source.lock:
+            if self.source.content and self.source.content[0].quantity > 30:
+                remaining_chocolate = self.source.content[0].quantity - 30
+                self.source.content[0].quantity = 30
+                self.source.ajouter_content(Chocolat(quantity=remaining_chocolate))
+
+        print(f"{self.name} has finished pouring the content.")

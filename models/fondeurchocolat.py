@@ -14,31 +14,14 @@ class FondeurChocolat(threading.Thread):
     """
 
     def __init__(self, name: str, quantity: float):
-        """
-        Initializes a new instance of the FondeurChocolat class.
-
-        Args:
-            name (str): The name of the chocolate melter.
-            quantity (float): The quantity of chocolate to be melted, in grams.
-        """
-        threading.Thread.__init__(self)
+        super().__init__()
         self.name = name
         self.quantity = quantity
+        self.lock = threading.Lock()
 
     def run(self):
         """
         Executes the chocolate melting process.
-
-        This method simulates the process of heating water, pouring it into a pan,
-        placing a bowl of chocolate, and then melting the chocolate by stirring it in
-        multiple rounds. Each round is calculated based on a fixed quantity of chocolate
-        to be melted per round.
-
-        The process includes:
-        - Heating water in a kettle.
-        - Pouring the water into a pan.
-        - Placing a bowl filled with chocolate.
-        - Melting the chocolate in rounds.
         """
         print(f"{self.name} puts water to heat in a kettle")
         time.sleep(8)

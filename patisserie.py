@@ -2,46 +2,63 @@ from models.recipient import Recipient
 from models.oeuf import Oeuf
 from models.chocolat import Chocolat
 from models.fondeurchocolat import FondeurChocolat
-from models.battre_ouf import BatteurOeufs
+from models.battre_ouf import Batteur
 from models.verseur import Verseur
 from models.appareil import Appareil
 
+
 def main():
-    # Création des récipients pour les œufs et le chocolat
-    recipient_oeufs = Recipient(name="bol d'œufs")
-    recipient_chocolat = Recipient(name="bol de chocolat", content=[Chocolat(quantity=200)])
+    # Create recipients
+    bol_chocolat = Recipient(name="Bol de chocolat")
+    bol_oeufs = Recipient(name="Bol d'œufs")
 
-    # Initialisation des threads pour fondre le chocolat et battre les œufs
-    fondeur_1 = FondeurChocolat(name="John", quantity=200)
-    batteur_1 = BatteurOeufs(name="Emilie", nb_oeufs=6, recipient=recipient_oeufs)
+    # Create and start Batteur thread to beat eggs
+    batteur = Batteur(name="Batteur Oeufs", quantity=6)
+    batteur.start()
 
-    # Démarrage des threads
-    fondeur_1.start()
-    batteur_1.start()
+    # Create and start Fondeur threads to melt chocolate
+    fondeur1 = FondeurChocolat(name="Fondeur 1", quantity=200)
+    fondeur2 = FondeurChocolat(name="Fondeur 2", quantity=200)
+    fondeur1.start()
+    fondeur2.start()
 
-    # Attente de la fin des threads
-    fondeur_1.join()
-    batteur_1.join()
+    # Wait for fondeur threads to finish melting
+    fondeur1.join()
+    fondeur2.join()
 
-    # Variables pour gérer la quantité de chocolat à verser
-    total_chocolat_a_verser = 170
-    chocolat_restant = recipient_chocolat.content[0].quantity - total_chocolat_a_verser
+    # Combine melted chocolate
+    bol_chocolat.ajouter_content(Chocolat(quantity=200))  # Fondeur 1
+    bol_chocolat.ajouter_content(Chocolat(quantity=200))  # Fondeur 2
 
-    # Versement de 170g de chocolat dans le bol d'œufs
-    recipient_oeufs.ajouter_content(Chocolat(quantity=total_chocolat_a_verser))
-    recipient_chocolat.content[0].quantity = chocolat_restant
+    print(f"Bol de chocolat contains: 400 grams Chocolat fondu")
 
-    # Affichage du contenu des récipients
-    recipient_chocolat.afficher_contenu()
-    recipient_oeufs.afficher_contenu()
+    # Wait for batteur to finish beating eggs
+    batteur.join()
 
-    # Mélange des ingrédients dans l'appareil
-    appareil = Appareil()
-    for ingredient in recipient_oeufs.content:
-        appareil.ajouter_ingredient(ingredient)
-    appareil.melanger()
+    # Add beaten eggs to bol d'œufs
+    oeufs = Oeuf(quantity=6)
+    bol_oeufs.ajouter_content(oeufs)
 
-    # Message final
+    # Create and start Verseur thread to pour chocolate into bol d'œufs
+    verseur = Verseur(name="Verseur", source=bol_chocolat, destination=bol_oeufs, rate=10, target_quantity=370)
+    verseur.start()
+
+    # Wait for verseur to finish pouring
+    verseur.join()
+
+    # Print the final contents of bol d'œufs and bol de chocolat
+    bol_oeufs.afficher_contenu()
+    if bol_chocolat.content:
+        print(f"Bol de chocolat contains: {bol_chocolat.content[0].quantity} grams Chocolat")
+    else:
+        print("Bol de chocolat is empty.")
+
+    # Mixing ingredients
+    print("Mixing ingredients:")
+    print(f"- {oeufs.quantity} number of Oeuf")
+    print(f"- {370} grams Chocolat")
+
+    # Final message
     print("Votre mousse au chocolat est prête!")
 
 if __name__ == "__main__":
