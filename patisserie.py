@@ -8,6 +8,47 @@ from models.appareil import Appareil
 
 
 def main():
+    """
+    main() function for preparing chocolate mousse.
+
+    This function simulates the process of making chocolate mousse by coordinating various tasks using threads.
+    It performs the following steps:
+
+    1. **Create Recipients:**
+       - Initializes two `Recipient` objects: one for holding melted chocolate (`bol_chocolat`) and one for holding the beaten eggs and chocolate mixture (`bol_oeufs`).
+
+    2. **Start Beating Eggs:**
+       - Creates a `Batteur` thread to beat 6 eggs and starts it.
+
+    3. **Start Melting Chocolate:**
+       - Creates two `FondeurChocolat` threads, each responsible for melting 200 grams of chocolate, and starts them.
+
+    4. **Combine Melted Chocolate:**
+       - Waits for the `FondeurChocolat` threads to finish melting the chocolate.
+       - Combines the melted chocolate from both `FondeurChocolat` threads into `bol_chocolat`, totaling 400 grams.
+
+    5. **Add Beaten Eggs:**
+       - Waits for the `Batteur` thread to finish beating the eggs.
+       - Adds the beaten eggs to `bol_oeufs`.
+
+    6. **Pour Chocolate into Eggs:**
+       - Creates a `Verseur` thread to pour 370 grams of melted chocolate into `bol_oeufs` in increments of 10 grams, leaving 30 grams in `bol_chocolat`.
+       - Starts and waits for the `Verseur` thread to complete the pouring process.
+
+    7. **Display Final Contents:**
+       - Prints the final contents of `bol_oeufs` and `bol_chocolat`.
+       - Displays the quantities of eggs and chocolate used.
+
+    8. **Mix Ingredients:**
+       - Prints the list of ingredients mixed together for the final chocolate mousse.
+
+    9. **Final Message:**
+       - Displays a message indicating that the chocolate mousse is ready.
+
+    This function demonstrates multithreading and coordination of different processes in a recipe preparation workflow.
+
+    """
+
     # Create recipients
     bol_chocolat = Recipient(name="Bol de chocolat")
     bol_oeufs = Recipient(name="Bol d'œufs")
